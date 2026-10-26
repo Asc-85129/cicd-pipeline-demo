@@ -1,0 +1,17 @@
+$ curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+mkdir -p ~/.kube && cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+kubectl wait --for=condition=Ready node --all --timeout=120s
+kubectl get nodes -o wide
+[INFO]  Finding release for channel stable
+[INFO]  Installing k3s to /usr/local/bin/k3s
+[INFO]  Creating /usr/local/bin/crictl symlink to k3s
+[INFO]  Creating killall script /usr/local/bin/k3s-killall.sh
+[INFO]  Creating uninstall script /usr/local/bin/k3s-uninstall.sh
+[INFO]  env: Creating environment file /etc/systemd/system/k3s.service.env
+[INFO]  systemd: Creating service file /etc/systemd/system/k3s.service
+[INFO]  systemd: Enabling k3s unit
+Created symlink /etc/systemd/system/multi-user.target.wants/k3s.service → /etc/systemd/system/k3s.service.
+[INFO]  systemd: Starting k3s
+node/runnervmtai0g condition met
+NAME            STATUS   ROLES           AGE   VERSION        INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION              CONTAINER-RUNTIME
+runnervmtai0g   Ready    control-plane   3s    v1.36.5+k3s1   10.1.1.143    <none>        Ubuntu 24.04.5 LTS   6.17.0-1022-azure (amd64)   containerd://2.3.4-k3s1.36

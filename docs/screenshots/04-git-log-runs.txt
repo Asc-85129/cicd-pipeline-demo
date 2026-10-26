@@ -1,0 +1,9 @@
+$ git log --oneline
+7f44495 Update test for v2 greeting
+0ba029c Change greeting to v2 (test not updated)
+aff5380 CI/CD pipeline: Flask app, tests, k8s manifests, GitHub Actions workflow
+
+$ gh run list
+completed    success    Update test for v2 greeting    CI-CD Pipeline    main    push    40382747880    54s    2026-10-26T19:00:02Z
+completed    failure    Change greeting to v2 (test not updated)    CI-CD Pipeline    main    push    40382598594    19s    2026-10-26T18:59:02Z
+completed    success    CI/CD pipeline: Flask app, tests, k8s manifests, GitHub Actions workflow    CI-CD Pipeline    main    push    40382330032    54s    2026-10-26T18:57:15Z

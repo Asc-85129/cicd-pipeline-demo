@@ -1,0 +1,25 @@
+$ kubectl create configmap cicd-demo-code \
+  --from-file=dist/app.py --from-file=dist/requirements.txt \
+  --dry-run=client -o yaml | kubectl apply -f -
+configmap/cicd-demo-code created
+$ VERSION=$(cat dist/VERSION)
+sed "s/APP_VERSION_PLACEHOLDER/$VERSION/" k8s/deployment.yaml | kubectl apply -f -
+kubectl apply -f k8s/service.yaml
+deployment.apps/cicd-demo created
+service/cicd-demo created
+$ kubectl rollout status deployment/cicd-demo --timeout=180s
+kubectl get deploy,pods,svc -o wide
+Waiting for deployment spec update to be observed...
+Waiting for deployment spec update to be observed...
+Waiting for deployment "cicd-demo" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "cicd-demo" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "cicd-demo" rollout to finish: 1 of 2 updated replicas are available...
+deployment "cicd-demo" successfully rolled out
+NAME                        READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES             SELECTOR
+deployment.apps/cicd-demo   2/2     2            2           17s   web          python:3.11-slim   app=cicd-demo
+NAME                            READY   STATUS    RESTARTS   AGE   IP          NODE            NOMINATED NODE   READINESS GATES
+pod/cicd-demo-fc647cf6d-dmpft   1/1     Running   0          15s   10.42.0.5   runnervmtai0g   <none>           <none>
+pod/cicd-demo-fc647cf6d-xnlnf   1/1     Running   0          15s   10.42.0.4   runnervmtai0g   <none>           <none>
+NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+service/cicd-demo    NodePort    10.43.98.194   <none>        80:30080/TCP   17s   app=cicd-demo
+service/kubernetes   ClusterIP   10.43.0.1      <none>        443/TCP        23s   <none>

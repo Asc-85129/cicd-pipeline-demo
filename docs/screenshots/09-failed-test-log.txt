@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /opt/hostedtoolcache/Python/3.11.17/x64/bin/python
+cachedir: .pytest_cache
+rootdir: /home/runner/work/cicd-pipeline-demo/cicd-pipeline-demo
+collecting ... collected 3 items
+tests/test_app.py::test_index_returns_message FAILED                     [ 33%]
+tests/test_app.py::test_health PASSED                                    [ 66%]
+tests/test_app.py::test_add PASSED                                       [100%]
+=================================== FAILURES ===================================
+__________________________ test_index_returns_message __________________________
+    def test_index_returns_message():
+        resp = client().get("/")
+        assert resp.status_code == 200
+>       assert resp.get_json()["message"] == "Hello from the CI/CD pipeline!"
+E       AssertionError: assert 'Hello from C... pipeline v2!' == 'Hello from t.../CD pipeline!'
+E         
+E         - Hello from the CI/CD pipeline!
+E         ?           ----
+E         + Hello from CI/CD pipeline v2!
+E         ?                          +++
+tests/test_app.py:17: AssertionError
+=========================== short test summary info ============================

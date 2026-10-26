@@ -1,0 +1,18 @@
+
+X main CI-CD Pipeline · 40382598594
+Triggered via push about 3 minutes ago
+
+JOBS
+X CI - Lint and Test in 14s (ID 121782495396)
+  ✓ Set up job
+  ✓ Checkout code
+  ✓ Set up Python
+  ✓ Install dependencies
+  ✓ Lint with flake8
+  X Run unit tests
+  - Package release artifact
+  - Upload artifact
+  - Post Set up Python
+  ✓ Post Checkout code
+  ✓ Complete job
+- CD - Deploy to Kubernetes (k3s) in 0s (ID 121782651445)

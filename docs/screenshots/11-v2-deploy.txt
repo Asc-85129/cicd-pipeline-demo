@@ -1,0 +1,17 @@
+$ gh run view 40382747880   # v2 deploy
+
+✓ main CI-CD Pipeline · 40382747880
+Triggered via push about 2 minutes ago
+
+JOBS
+✓ CI - Lint and Test in 12s (ID 121783017546)
+✓ CD - Deploy to Kubernetes (k3s) in 35s (ID 121783159516)
+
+--- Smoke test output ---
+deployment "cicd-demo" successfully rolled out
+echo "Smoke test passed"
+{"message":"Hello from CI/CD pipeline v2!","pod":"cicd-demo-79c6cf49d6-2fnlt","version":"7f44495"}
+{"message":"Hello from CI/CD pipeline v2!","pod":"cicd-demo-79c6cf49d6-2fnlt","version":"7f44495"}
+{"message":"Hello from CI/CD pipeline v2!","pod":"cicd-demo-79c6cf49d6-2fnlt","version":"7f44495"}
+{"status":"ok"}
+Smoke test passed

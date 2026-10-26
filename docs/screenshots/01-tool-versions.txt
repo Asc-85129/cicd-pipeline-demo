@@ -1,0 +1,10 @@
+$ git --version
+git version 2.52.0.windows.1
+$ python --version
+Python 3.11.8
+$ gh --version
+gh version 2.92.0 (2026-04-28)
+$ gh auth status
+github.com
+  ✓ Logged in to github.com account Asc-85129 (keyring)
+  - Active account: true

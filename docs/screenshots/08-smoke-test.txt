@@ -1,0 +1,9 @@
+$ for i in 1 2 3; do curl -s http://localhost:30080/; echo; done
+curl -sf http://localhost:30080/health
+curl -s http://localhost:30080/ | grep -q "$(cat dist/VERSION)"
+echo "Smoke test passed"
+{"message":"Hello from the CI/CD pipeline!","pod":"cicd-demo-fc647cf6d-dmpft","version":"aff5380"}
+{"message":"Hello from the CI/CD pipeline!","pod":"cicd-demo-fc647cf6d-xnlnf","version":"aff5380"}
+{"message":"Hello from the CI/CD pipeline!","pod":"cicd-demo-fc647cf6d-xnlnf","version":"aff5380"}
+{"status":"ok"}
+Smoke test passed
