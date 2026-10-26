@@ -14,7 +14,7 @@ def client():
 def test_index_returns_message():
     resp = client().get("/")
     assert resp.status_code == 200
-    assert resp.get_json()["message"] == "Hello from the CI/CD pipeline!"
+    assert resp.get_json()["message"] == "Hello from CI/CD pipeline v2!"
 
 
 def test_health():
