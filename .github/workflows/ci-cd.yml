@@ -1,0 +1,98 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ---------------- Continuous Integration ----------------
+  build-test:
+    name: CI - Lint and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r app/requirements.txt
+          pip install pytest flake8
+
+      - name: Lint with flake8
+        run: flake8 app tests --max-line-length=100
+
+      - name: Run unit tests
+        run: pytest -v tests
+
+      - name: Package release artifact
+        run: |
+          mkdir -p dist
+          cp app/app.py app/requirements.txt dist/
+          echo "${GITHUB_SHA::7}" > dist/VERSION
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: dist/
+
+  # ---------------- Continuous Deployment ----------------
+  deploy:
+    name: CD - Deploy to Kubernetes (k3s)
+    needs: build-test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release
+          path: dist/
+
+      - name: Start Kubernetes cluster (k3s, containerd - no Docker)
+        run: |
+          curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+          mkdir -p ~/.kube && cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+          kubectl wait --for=condition=Ready node --all --timeout=120s
+          kubectl get nodes -o wide
+
+      - name: Publish app code as ConfigMap
+        run: |
+          kubectl create configmap cicd-demo-code \
+            --from-file=dist/app.py --from-file=dist/requirements.txt \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy manifests
+        run: |
+          VERSION=$(cat dist/VERSION)
+          sed "s/APP_VERSION_PLACEHOLDER/$VERSION/" k8s/deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/service.yaml
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/cicd-demo --timeout=180s
+          kubectl get deploy,pods,svc -o wide
+
+      - name: Smoke test
+        run: |
+          for i in 1 2 3; do curl -s http://localhost:30080/; echo; done
+          curl -sf http://localhost:30080/health
+          curl -s http://localhost:30080/ | grep -q "$(cat dist/VERSION)"
+          echo "Smoke test passed"
+
+      - name: Debug on failure
+        if: failure()
+        run: |
+          kubectl describe pods -l app=cicd-demo || true
+          kubectl logs -l app=cicd-demo --tail=50 || true
