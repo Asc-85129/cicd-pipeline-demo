@@ -11,7 +11,7 @@ VERSION = os.environ.get("APP_VERSION", "dev")
 @app.route("/")
 def index():
     return jsonify(
-        message="Hello from the CI/CD pipeline!",
+        message="Hello from CI/CD pipeline v2!",
         version=VERSION,
         pod=socket.gethostname(),
     )
